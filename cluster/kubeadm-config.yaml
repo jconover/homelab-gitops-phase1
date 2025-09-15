@@ -6,15 +6,18 @@ networking:
   serviceSubnet: 10.96.0.0/12
 controllerManager:
   extraArgs:
-    bind-address: "0.0.0.0"
+    - name: bind-address
+      value: "0.0.0.0"
 scheduler:
   extraArgs:
-    bind-address: "0.0.0.0"
+    - name: bind-address
+      value: "0.0.0.0"
 ---
 apiVersion: kubeadm.k8s.io/v1beta4
 kind: InitConfiguration
 nodeRegistration:
   criSocket: unix:///var/run/containerd/containerd.sock
 localAPIEndpoint:
-  advertiseAddress: 192.168.68.86
+  advertiseAddress: 192.168.68.86   # <- set to your master IP
   bindPort: 6443
+

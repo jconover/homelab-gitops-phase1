@@ -12,7 +12,7 @@ curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 |
 
 # Bootstrap cluster services + Argo CD + App-of-Apps
 kubectl create ns argocd || true
-bash scripts/cluster_bootstrap.sh
+bash scripts/03-cluster_bootstrap.sh
 
 echo "[OK] Control plane initialized and cluster services installed."
 echo "Wait for Argo CD to sync Applications. Then manage everything via the Argo UI."
