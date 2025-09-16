@@ -1,0 +1,49 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 65.*
+    helm:
+      values: |
+        grafana:
+          adminPassword: "adminpass"
+          service:
+            type: LoadBalancer
+          ingress:
+            enabled: true
+            ingressClassName: nginx
+            hosts: ["grafana.home.lan"]
+            paths: ["/"]
+        alertmanager:
+          config:
+            route:
+              receiver: "slack-default"
+              group_by: ["alertname","namespace"]
+              group_wait: 30s
+              group_interval: 5m
+              repeat_interval: 3h
+            receivers:
+            - name: "slack-default"
+              slack_configs:
+              - send_resolved: true
+                api_url: "YOUR_SLACK_WEBHOOK_URL"
+                channel: "#homelab-alerts"
+                username: "alertmanager"
+                title: "{{ '{{' }} .CommonLabels.alertname {{ '}}' }} ({{ '{{' }} .Status {{ '}}' }})"
+                text: |
+                  *Summary:* {{ '{{' }} .CommonAnnotations.summary {{ '}}' }}
+                  *Description:* {{ '{{' }} .CommonAnnotations.description {{ '}}' }}
+                  *Severity:* {{ '{{' }} .CommonLabels.severity {{ '}}' }}
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

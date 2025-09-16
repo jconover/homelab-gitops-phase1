@@ -1,0 +1,6 @@
+# Longhorn default values (tune if needed)
+defaultSettings:
+  defaultReplicaCount: 2
+  guaranteedEngineCPU: 0.1
+  backupTarget: ""
+  backupTargetCredentialSecret: ""

@@ -1,0 +1,30 @@
+grafana:
+  adminPassword: "adminpass"
+  service:
+    type: LoadBalancer
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts: ["grafana.home.lan"]
+    paths: ["/"]
+
+alertmanager:
+  config:
+    route:
+      receiver: "slack-default"
+      group_by: ["alertname","namespace"]
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 3h
+    receivers:
+    - name: "slack-default"
+      slack_configs:
+      - send_resolved: true
+        api_url: "YOUR_SLACK_WEBHOOK_URL"
+        channel: "#homelab-alerts"
+        username: "alertmanager"
+        title: "{{ .CommonLabels.alertname }} ({{ .Status }})"
+        text: |
+          *Summary:* {{ .CommonAnnotations.summary }}
+          *Description:* {{ .CommonAnnotations.description }}
+          *Severity:* {{ .CommonLabels.severity }}
