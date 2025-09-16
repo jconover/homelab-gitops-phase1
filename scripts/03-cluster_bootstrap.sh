@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Install Helm if needed
+curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
 # Ensure Helm repos are present
 helm repo add argo https://argoproj.github.io/argo-helm || true
 helm repo add cilium https://helm.cilium.io/ || true
